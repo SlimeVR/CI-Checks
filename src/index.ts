@@ -124,6 +124,7 @@ app.webhooks.on(
 			sha: payload.pull_request.head.sha,
 			state: "failure",
 			context: CI_CHECK_NAME,
+			target_url: pullRequest.data.url,
 			description: "SolarXR PR still not merged."
 		});
 	},
