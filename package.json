@@ -6,7 +6,8 @@
   "main": "src/index.js",
   "type": "module",
   "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "dev": "tsc-watch --onSuccess \"node .\""
   },
   "author": "ImUrX <imurx@proton.me>",
   "license": "Apache-2.0 or MIT",
@@ -16,6 +17,8 @@
   },
   "devDependencies": {
     "@types/node": "^20.12.4",
-    "prettier": "^3.2.5"
+    "prettier": "^3.2.5",
+    "tsc-watch": "^6.2.0",
+    "typescript": "^5.4.4"
   }
 }
