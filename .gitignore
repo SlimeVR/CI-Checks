@@ -1,0 +1,10 @@
+# Nix stuff
+.direnv
+.devenv
+
+# VSCode stuff
+/.vscode/settings.json
+
+# Node Stuff
+node_modules
+.env
