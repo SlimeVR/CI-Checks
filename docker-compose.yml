@@ -23,9 +23,9 @@ services:
             start_period: 5s
         labels:
             - traefik.enable
-            - traefik.http.routers.blog.rule=Host(`ci.slimevr.io`)
-            - traefik.http.routers.blog.tls=true
-            - traefik.http.routers.blog.tls.certresolver=lets-encrypt
+            - traefik.http.routers.ci-bot.rule=Host(`ci.slimevr.io`)
+            - traefik.http.routers.ci-bot.tls=true
+            - traefik.http.routers.ci-bot.tls.certresolver=lets-encrypt
 secrets:
     github_app_key:
         file: ./github_key.pem
