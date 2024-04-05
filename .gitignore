@@ -9,3 +9,7 @@
 node_modules
 /dist
 .env
+
+# Docker secrets
+github_key.pem
+webhook_secret.txt

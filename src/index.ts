@@ -140,4 +140,18 @@ app.webhooks.on(
 );
 
 // Your app can now receive webhook events at `/api/github/webhooks`
-createServer(createNodeMiddleware(app)).listen(3000);
+const port = parseInt(process.env.PORT!) || 3000;
+console.log(`Initializing server in localhost:${port}`);
+const octokitMiddleware = createNodeMiddleware(app);
+createServer((req, res) => {
+	if (req.method === "GET" && req.url) {
+		const url = new URL(req.url, `http://${req.headers.host}`);
+		if (url.pathname === "/health") {
+			res.writeHead(200);
+			res.end("OK");
+			return;
+		}
+	}
+
+	return octokitMiddleware(req, res);
+}).listen(port);
