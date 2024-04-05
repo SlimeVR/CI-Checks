@@ -1,5 +1,5 @@
 {
-  "name": "CI-Checks",
+  "name": "ci-checks",
   "version": "1.0.0",
   "description": "",
   "packageManager": "pnpm@8.15.6",
