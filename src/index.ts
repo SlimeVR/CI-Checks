@@ -11,14 +11,17 @@ import {
 
 let privateKey: string;
 if (process.env.PRIVATE_KEY_FILE) {
-	privateKey = await fs.readFile(process.env.PRIVATE_KEY_FILE, "utf8");
+	privateKey = (await fs.readFile(process.env.PRIVATE_KEY_FILE, "utf8")).slice(0, -1);
 } else {
 	privateKey = process.env.PRIVATE_KEY!;
 }
 
 let webhookSecret: string;
 if (process.env.WEBHOOK_SECRET_FILE) {
-	webhookSecret = await fs.readFile(process.env.WEBHOOK_SECRET_FILE, "utf8");
+	webhookSecret = (await fs.readFile(process.env.WEBHOOK_SECRET_FILE, "utf8")).slice(
+		0,
+		-1,
+	);
 } else {
 	webhookSecret = process.env.WEBHOOK_SECRET!;
 }
