@@ -1,6 +1,6 @@
 import "dotenv/config";
 import { createServer } from "node:http";
-import fs from "node:fs/promises"
+import fs from "node:fs/promises";
 import { App, createNodeMiddleware } from "octokit";
 import {
 	CI_CHECK_NAME,
@@ -9,19 +9,26 @@ import {
 	REPO_DEP_PR_REGEX,
 } from "./utils.js";
 
-if(process.env.PRIVATE_KEY_FILE) {
-	process.env.PRIVATE_KEY = await fs.readFile(process.env.PRIVATE_KEY_FILE, "utf8");
+let privateKey: string;
+if (process.env.PRIVATE_KEY_FILE) {
+	privateKey = await fs.readFile(process.env.PRIVATE_KEY_FILE, "utf8");
+	console.log(privateKey)
+} else {
+	privateKey = process.env.PRIVATE_KEY!;
 }
 
-if(process.env.WEBHOOK_SECRET_FILE) {
-	process.env.WEBHOOK_SECRET = await fs.readFile(process.env.WEBHOOK_SECRET_FILE, "utf8");
+let webhookSecret: string;
+if (process.env.WEBHOOK_SECRET_FILE) {
+	webhookSecret = await fs.readFile(process.env.WEBHOOK_SECRET_FILE, "utf8");
+} else {
+	webhookSecret = process.env.WEBHOOK_SECRET!;
 }
 
 const app = new App({
 	appId: process.env.APP_ID!,
-	privateKey: process.env.PRIVATE_KEY!,
+	privateKey,
 	webhooks: {
-		secret: process.env.WEBHOOK_SECRET!,
+		secret: webhookSecret,
 	},
 	oauth: { clientId: null!, clientSecret: null! },
 });
