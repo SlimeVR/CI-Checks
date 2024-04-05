@@ -12,7 +12,6 @@ import {
 let privateKey: string;
 if (process.env.PRIVATE_KEY_FILE) {
 	privateKey = await fs.readFile(process.env.PRIVATE_KEY_FILE, "utf8");
-	console.log(privateKey)
 } else {
 	privateKey = process.env.PRIVATE_KEY!;
 }
