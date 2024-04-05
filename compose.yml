@@ -26,7 +26,7 @@ services:
             - traefik.http.routers.ci-bot.rule=Host(`ci.slimevr.io`)
             - traefik.http.routers.ci-bot.tls=true
             - traefik.http.routers.ci-bot.tls.certresolver=letsencrypt
-            - traefik.http.routers.ci-bot.loadbalancer.server.port=3001
+            - traefik.http.services.ci-bot.loadbalancer.server.port=3001
 secrets:
     github_app_key:
         file: ./github_key.pem
