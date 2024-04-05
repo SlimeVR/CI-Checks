@@ -25,12 +25,14 @@ app.webhooks.on(
 	["pull_request.opened", "pull_request.edited", "pull_request.synchronize"],
 	async ({ octokit, payload }) => {
 		if (!LISTENING_REPOS.has(payload.repository.name)) {
-			console.log(`Ignoring ${payload.repository.name} as it's not included in LISTENING_REPOS`);
+			console.log(
+				`Ignoring ${payload.repository.name} as it's not included in LISTENING_REPOS`,
+			);
 			return;
 		}
 		const [owner, repo] = payload.repository.full_name.split("/");
 		console.log(
-			`Checking commit ${payload.pull_request.head.sha} in PR ${owner}/${repo}#${payload.pull_request.number}`,
+			`Checking commit ${payload.pull_request.head.sha} in ${owner}/${repo}#${payload.pull_request.number} because of ${payload.action}`,
 		);
 
 		// Check if there is a SolarXR pull request being mentioned
