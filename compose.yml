@@ -1,6 +1,7 @@
 services:
     ci-bot:
         build: .
+        restart: always
         logging:
             driver: "json-file"
             options:
@@ -8,8 +9,8 @@ services:
                 max-file: "10"
         environment:
             APP_ID: ${APP_ID}
-            PRIVATE_KEY: /run/secrets/github_app_key
-            WEBHOOK_SECRET: /run/secrets/webhook_secret
+            PRIVATE_KEY_FILE: /run/secrets/github_app_key
+            WEBHOOK_SECRET_FILE: /run/secrets/webhook_secret
             PORT: 3001
         secrets:
             - github_app_key
