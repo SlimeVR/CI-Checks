@@ -1,4 +1,3 @@
-version: "3"
 services:
     ci-bot:
         build: .
@@ -11,12 +10,14 @@ services:
             APP_ID: ${APP_ID}
             PRIVATE_KEY: /run/secrets/github_key
             WEBHOOK_SECRET: /run/secrets/webhook_secret
-            PORT: 80
+            PORT: 3001
+        ports:
+          - 3001:3001/tcp
         secrets:
             - github_app_key
             - webhook_secret
         healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:80/health"]
+            test: ["CMD", "curl", "-f", "http://localhost:3001/health"]
             interval: 1m30s
             timeout: 30s
             retries: 5
