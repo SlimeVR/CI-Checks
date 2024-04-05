@@ -3,7 +3,6 @@ import { createServer } from "node:http";
 import { App, createNodeMiddleware } from "octokit";
 import {
 	CI_CHECK_NAME,
-	CI_CHECK_TITLE,
 	LISTENING_REPOS,
 	REPO_DEPENDENCY,
 	REPO_DEP_PR_REGEX,
@@ -15,16 +14,24 @@ const app = new App({
 	webhooks: {
 		secret: process.env.WEBHOOK_SECRET!,
 	},
+	oauth: { clientId: null!, clientSecret: null! },
+});
+
+app.webhooks.on("installation.created", async ({ payload }) => {
+	console.log(`Installed Github App in ${payload.sender.url}`);
 });
 
 app.webhooks.on(
 	["pull_request.opened", "pull_request.edited", "pull_request.synchronize"],
 	async ({ octokit, payload }) => {
-		const [owner, repo] = payload.repository.full_name.split("/");
-		if (!LISTENING_REPOS.has(repo)) {
-			console.log(`Ignoring ${repo} as it's not included in LISTENING_REPOS`);
+		if (!LISTENING_REPOS.has(payload.repository.name)) {
+			console.log(`Ignoring ${payload.repository.name} as it's not included in LISTENING_REPOS`);
 			return;
 		}
+		const [owner, repo] = payload.repository.full_name.split("/");
+		console.log(
+			`Checking commit ${payload.pull_request.head.sha} in PR ${owner}/${repo}#${payload.pull_request.number}`,
+		);
 
 		// Check if there is a SolarXR pull request being mentioned
 		let pullRequestSolarXR: number | null = null;
@@ -51,7 +58,7 @@ app.webhooks.on(
 				for (const file of files) {
 					if (file.filename.toLowerCase() === REPO_DEPENDENCY.toLowerCase()) {
 						fileChanged = true;
-						commitSha = file.sha
+						commitSha = file.sha;
 						break outerLoop;
 					}
 				}
@@ -80,14 +87,14 @@ app.webhooks.on(
 			});
 		}
 
-		if(!fileChanged || !commitSha) {
+		if (!fileChanged || !commitSha) {
 			return await octokit.rest.repos.createCommitStatus({
 				owner,
 				repo,
 				sha: payload.pull_request.head.sha,
 				state: "failure",
 				context: CI_CHECK_NAME,
-				description: "SolarXR PR found but no change on the submodule."
+				description: "SolarXR PR found but no change on the submodule.",
 			});
 		}
 
@@ -98,8 +105,8 @@ app.webhooks.on(
 		});
 
 		// If SolarXR PR is merged, check if merge commit sha is the same as submodule
-		if(pullRequest.data.merged) {
-			if(pullRequest.data.merge_commit_sha === commitSha) {
+		if (pullRequest.data.merged) {
+			if (pullRequest.data.merge_commit_sha === commitSha) {
 				return await octokit.rest.repos.createCommitStatus({
 					owner,
 					repo,
@@ -114,7 +121,7 @@ app.webhooks.on(
 				sha: payload.pull_request.head.sha,
 				state: "failure",
 				context: CI_CHECK_NAME,
-				description: "SolarXR submodule still pointing to PR branch."
+				description: "SolarXR submodule still pointing to PR branch.",
 			});
 		}
 
@@ -125,9 +132,10 @@ app.webhooks.on(
 			state: "failure",
 			context: CI_CHECK_NAME,
 			target_url: pullRequest.data.url,
-			description: "SolarXR PR still not merged."
+			description: "SolarXR PR still not merged.",
 		});
 	},
 );
 
+// Your app can now receive webhook events at `/api/github/webhooks`
 createServer(createNodeMiddleware(app)).listen(3000);
