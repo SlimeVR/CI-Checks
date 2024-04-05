@@ -13,6 +13,8 @@ RUN --mount=type=cache,id=pnpm,target=/pnpm/store pnpm install --frozen-lockfile
 RUN pnpm run build
 
 FROM base
+# curl is needed for healthcheck
+RUN apt update && apt install -y curl
 COPY --from=prod-deps /app/node_modules /app/node_modules
 COPY --from=build /app/dist /app/dist
 CMD [ "pnpm", "start" ]

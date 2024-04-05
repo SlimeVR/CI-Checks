@@ -7,26 +7,25 @@ services:
             options:
                 max-size: "10m"
                 max-file: "10"
-        ports:
-            - 3000:3000/tcp
         environment:
             APP_ID: ${APP_ID}
             PRIVATE_KEY: /run/secrets/github_key
             WEBHOOK_SECRET: /run/secrets/webhook_secret
+            PORT: 80
         secrets:
             - github_app_key
             - webhook_secret
         healthcheck:
-            test: ["CMD", "curl", "-f", "http://localhost:3000/health"]
+            test: ["CMD", "curl", "-f", "http://localhost:80/health"]
             interval: 1m30s
             timeout: 30s
             retries: 5
             start_period: 5s
         labels:
+            - traefik.enable
             - traefik.http.routers.blog.rule=Host(`ci.slimevr.io`)
             - traefik.http.routers.blog.tls=true
             - traefik.http.routers.blog.tls.certresolver=lets-encrypt
-            - traefik.port=3000
 secrets:
     github_app_key:
         file: ./github_key.pem
