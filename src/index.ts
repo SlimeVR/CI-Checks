@@ -120,10 +120,24 @@ app.webhooks.on(
 			repo: REPO_DEPENDENCY,
 			pull_number: pullRequestSolarXR,
 		});
+		const lastCommits = (
+			await octokit.rest.repos.listCommits({
+				owner,
+				repo: REPO_DEPENDENCY,
+			})
+		).data.map((commit) => commit.sha);
 
 		// If SolarXR PR is merged, check if merge commit sha is the same as submodule
 		if (pullRequest.data.merged) {
-			if (pullRequest.data.merge_commit_sha === commitSha) {
+			const commitIndex = lastCommits.findIndex((s) => commitSha === s);
+			if (
+				pullRequest.data.merge_commit_sha === commitSha ||
+				(commitIndex > -1 &&
+					commitIndex <
+						lastCommits.findIndex(
+							(s) => pullRequest.data.merge_commit_sha === s,
+						))
+			) {
 				return await octokit.rest.repos.createCommitStatus({
 					owner,
 					repo,
